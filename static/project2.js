@@ -1,20 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    var socket = io();
+    var socket = io.connect('http://' + document.domain + ':' + location.port + '/index');
     socket.on('connect', function () {
-        socket.emit('connectionEvent', {'data':[{'connect':'Connected'}]});
+        socket.emit('connected');
     });
-    socket.on('addConnection', msg => {
-        alert("hello");
+    // console.log(io.sockets.adapter.rooms);
+    // var rooms =  io.sockets.manager.roomClients[socket.id];
+    // var clients = io.adapter.allRooms( (err, rooms) => {
+    //     console.log(rooms)
+    // });
+    socket.on('new_user', msg => {
         const li = document.createElement('li');
-        li.innerHTML = msg.user + ' ' + msg.connection;
-        document.querySelector('#messages').append(li);
+        li.innerHTML = msg.msg
+        document.querySelector('#messages').append(li)
     });
+    // socket.on('newMessage', msg => {
+
+    // })
+    // });
     socket.on('addEvent', msg => {
         const li = document.createElement('li');
-        var user = localStorage.getItem('user');
+        // var user = localStorage.getItem('user');
         // li.innerHTML = user.bold() + ': ' + msg;
-        li.innerHTML = `${socket.id}` + ': ' + msg;
+        li.innerHTML = msg.msg;
         document.querySelector('#messages').append(li);
     });
     document.querySelector('button').onclick = submit;
@@ -23,4 +31,5 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('submitted', {'data':msg} );
         document.querySelector('#myMessage').value='';
     };
+// });
 });
